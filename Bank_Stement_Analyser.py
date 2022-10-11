@@ -42,18 +42,27 @@ def parse_Scotia_Pdf(filePath):
                             if statementPageLines[i].isnumeric():
                                 if int(statementPageLines[lineCounter + 1])+ (statementLineCounter) == int(statementPageLines[i]):
                                     # print("\n")
-                                    # print(statementPageLines[i])
+                                    # print(statementLineCounter)
                                     transactionElements = []
-                                    for j in range(0, 8):
+                                    for j in range(0, 9):
                                         if statementPageLines[i+j].isnumeric():
                                             if int(statementPageLines[lineCounter + 1])+statementLineCounter + 1 == int(statementPageLines[i+j]):
                                                 # print(int(statementPageLines[lineCounter+12])+statementLineCounter +1)
                                                 break
+                                        if statementPageLines[i+j] == "If you have any questions about this":
+                                            break
                                         if j != 0:
                                             transactionElements.append(
                                                 statementPageLines[i+j])
+                                        
                                         # print(statementPageLines[i+j])
                                     # print(int(statementPageLines[i]))
+                                    
+                                    cost = [transactionElements[len(transactionElements) - 1]]
+                                     # print cost
+                                
+                                    transactionElements = (transactionElements[0:3]) + cost
+
                                     transactionDict.update(
                                         {int(statementPageLines[i]): transactionElements})
                                     # print(transactionDict)
@@ -73,14 +82,21 @@ def parse_Scotia_Pdf(filePath):
                                     # print("\n")
                                     # print(statementPageLines[i])
                                     transactionElements = []
-                                    for j in range(0, 8):
+                                    for j in range(0, 9):
                                         if statementPageLines[i+j].isnumeric():
                                             if int(statementPageLines[lineCounter+8])+statementLineCounter + 1 == int(statementPageLines[i+j]):
                                                 # print(int(statementPageLines[lineCounter+12])+statementLineCounter +1)
                                                 break
+                                        if statementPageLines[i+j] == "SUB-TOTAL CREDITS":
+                                            break
                                         if j != 0:
                                             transactionElements.append(
                                                 statementPageLines[i+j])
+
+                                    cost = [transactionElements[len(transactionElements) - 1]]
+                                     # print cost
+                                
+                                    transactionElements = (transactionElements[0:3]) + cost
                                         # print(statementPageLines[i+j])
                                     # print(int(statementPageLines[i]))
                                     transactionDict.update(
@@ -101,9 +117,7 @@ def parse_Scotia_Pdf(filePath):
     worksheet.write(0 , 1 , "Transaction Date")
     worksheet.write(0 , 2 , "Transaction Post")
     worksheet.write(0 , 3 , "Details")
-    worksheet.write(0 , 4 , "Location")
-    worksheet.write(0 , 5 , "Location")
-    worksheet.write(0 , 6 , "Amount(CAD)")
+    worksheet.write(0 , 4 , "Amount(CAD)")
     
     row = 1
     for key in transactionDict.keys():
