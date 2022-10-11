@@ -1,10 +1,11 @@
 from webbrowser import get
 import PyPDF2
+import xlsxwriter
 
 
 def main_function():
 
-    filePathScotia = 'Scotia_September_statement.pdf'
+    filePathScotia = 'statement-34.pdf'
     parse_Scotia_Pdf(filePathScotia)
 
 
@@ -32,20 +33,20 @@ def parse_Scotia_Pdf(filePath):
                         # We can directly jump to page number
                         # print(item[-1])
                         pass
-                    if "Transactions since your last statement" in item:
-                        statementNum = statementPageLines[lineCounter+12]
+                    if "AMOUNT($)" in item:
+                        statementNum = statementPageLines[lineCounter + 1]
                         # Found
                         # print("Transaction Number:", statementNum)
                         statementLineCounter = 0
-                        for i in range(lineCounter+12, len(statementPageLines)):
+                        for i in range(lineCounter + 1, len(statementPageLines)):
                             if statementPageLines[i].isnumeric():
-                                if int(statementPageLines[lineCounter+12])+statementLineCounter == int(statementPageLines[i]):
+                                if int(statementPageLines[lineCounter + 1])+ (statementLineCounter) == int(statementPageLines[i]):
                                     # print("\n")
                                     # print(statementPageLines[i])
                                     transactionElements = []
                                     for j in range(0, 8):
                                         if statementPageLines[i+j].isnumeric():
-                                            if int(statementPageLines[lineCounter+12])+statementLineCounter + 1 == int(statementPageLines[i+j]):
+                                            if int(statementPageLines[lineCounter + 1])+statementLineCounter + 1 == int(statementPageLines[i+j]):
                                                 # print(int(statementPageLines[lineCounter+12])+statementLineCounter +1)
                                                 break
                                         if j != 0:
@@ -91,6 +92,26 @@ def parse_Scotia_Pdf(filePath):
     print("\n")
     pdfFileObj.close()
     print(transactionDict)
+
+    #converting the dictionary file to the excel file 
+    workbook = xlsxwriter.Workbook('transactions.xlsx')
+    worksheet = workbook.add_worksheet()
+    
+    worksheet.write(0 , 0 , "Reference Number")
+    worksheet.write(0 , 1 , "Transaction Date")
+    worksheet.write(0 , 2 , "Transaction Post")
+    worksheet.write(0 , 3 , "Details")
+    worksheet.write(0 , 4 , "Location")
+    worksheet.write(0 , 5 , "Location")
+    worksheet.write(0 , 6 , "Amount(CAD)")
+    
+    row = 1
+    for key in transactionDict.keys():
+        worksheet.write(row, 0, key)
+        worksheet.write_row(row, 1, transactionDict[key])
+        row += 1
+
+    workbook.close()
 
 
 def parse_Neo_Pdf(filePath):
