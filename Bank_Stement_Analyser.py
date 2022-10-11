@@ -60,8 +60,13 @@ def parse_Scotia_Pdf(filePath):
                                     
                                     cost = [transactionElements[len(transactionElements) - 1]]
                                      # print cost
-                                
-                                    transactionElements = (transactionElements[0:3]) + cost
+                                    Discription = ""
+                                    
+
+                                    for x in range(2 , (len(transactionElements)-1)):
+                                        Discription =  Discription + " " + transactionElements[x]
+                                                                       
+                                    transactionElements = (transactionElements[0:2]) + [Discription] + cost
 
                                     transactionDict.update(
                                         {int(statementPageLines[i]): transactionElements})
